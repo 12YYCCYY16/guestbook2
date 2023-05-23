@@ -1,5 +1,6 @@
 package kr.ac.kopo.guestbook.controller;
 
+import kr.ac.kopo.guestbook.dto.GuestbookDTO;
 import kr.ac.kopo.guestbook.dto.PageRequestDTO;
 import kr.ac.kopo.guestbook.dto.PageResultDTO;
 import kr.ac.kopo.guestbook.service.GuestbookService;
@@ -9,7 +10,9 @@ import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/guestbook")
@@ -30,5 +33,25 @@ public class GuestBookController {
         log.info("페이지 요청정보:" + pageRequestDTO);
         model.addAttribute("result", service.getList(pageRequestDTO));
     }
+
+    //등록화면을 보여줌 (get방식)
+    @GetMapping("/register")
+    public void register() {
+        log.info("show register...");
+    }
+    //등록 처리 후에 목록페이지를 이동
+    @PostMapping("/register")
+    public String registerPost(GuestbookDTO dto, RedirectAttributes redirectAttributes) {
+
+        log.info("dto..." + dto);
+
+        // 새로 추가된 엔티티의 번호
+        Long gno = service.register(dto);
+
+        redirectAttributes.addFlashAttribute("msg", gno);
+
+        return "redirect:/guestbook/list";
+    }
+
 }
 
